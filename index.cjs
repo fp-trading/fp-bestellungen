@@ -37,7 +37,6 @@ function createWindow() {
 }
 
 function loadPage() {
-    console.log('loading')
     mainWindow.loadURL('http://localhost:5173/').catch((err) => {
         setTimeout(() => { loadPage() }, 200)
     })
