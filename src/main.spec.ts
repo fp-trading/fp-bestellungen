@@ -1,5 +1,4 @@
-import { it, expect } from 'vitest'
+import { test } from 'vitest'
 
-it ("runs app", () => {
-    expect(true).toBe(true)
+test('if test setup works', () => {
 })
