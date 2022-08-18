@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Column, Form, Grid, Row, TextInput } from "carbon-components-svelte";
-  import App from "./App.svelte";
 </script>
 
 <Form>
