@@ -7,10 +7,7 @@
   <Grid padding noGutter>
     <Row>
       <Column>
-        <TextInput
-          labelText="Name"
-          placeholder="Kundenname eingeben.App.App."
-        />
+        <TextInput labelText="Name" placeholder="Kundenname eingeben..." />
       </Column>
     </Row>
     <Row>
