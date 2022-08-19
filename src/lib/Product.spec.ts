@@ -1,7 +1,7 @@
-import { it, expect } from 'vitest'
-import { Product } from './Product'
+import { expect, it } from "vitest";
+import Product from "./Product";
 
-it('has sku, color and quantity', () => {
+it('has sku, color and quantity attributes', () => {
     const product = new Product()
 
     expect(Object.getOwnPropertyNames(product)).toContain('sku')

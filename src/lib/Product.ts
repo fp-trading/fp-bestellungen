@@ -1,5 +1,5 @@
-export class Product {
-    sku: String;
-    color: String;
-    quantity: Number;
+export default class Product {
+    sku
+    color
+    quantity
 }
