@@ -1,5 +1,4 @@
 import Product from "src/lib/Product";
-import { to_number } from "svelte/internal";
 import { afterEach, beforeEach, expect, it } from "vitest";
 import { products } from "./products";
 
