@@ -3,7 +3,8 @@ import Product from './Product'
 export default class ProductStore {
     products: Array<Product> = []
 
-    add(product: Product) {
+    add(product?: Product) {
+        if (product === undefined) product = new Product()
         this.addToMatchingOrPushNew(product, this.getMatchingProductIndex(product))
     }
 

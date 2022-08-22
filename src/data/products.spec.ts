@@ -19,6 +19,13 @@ it('adds new Product to list', () => {
     })
 })
 
+it('adds empty product if no product info is given', () => {
+    products.subscribe(value => {
+        value.add()
+        expect(value.products).toContainEqual(new Product())
+    })
+})
+
 it('adds quantities of same Product', () => {
     products.subscribe(value => {
         const product = new Product('00000-001', '', 1)
