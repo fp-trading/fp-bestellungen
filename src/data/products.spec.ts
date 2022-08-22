@@ -48,6 +48,37 @@ it('removes single product', () => {
     })
 })
 
+it('returns correct DataTable format', () => {
+    products.subscribe(value => {
+        value.add(new Product())
+        value.add(new Product('00000-001', '', 3))
+        value.add(new Product('00000-001', 'RAL1000', 1))
+
+        const result = value.getDataTableArray()
+
+        expect(result).toContainEqual({
+            id: 0,
+            sku: '00000-000',
+            color: '',
+            quantity: 0
+        })
+
+        expect(result).toContainEqual({
+            id: 1,
+            sku: '00000-001',
+            color: '',
+            quantity: 3
+        })
+
+        expect(result).toContainEqual({
+            id: 2,
+            sku: '00000-001',
+            color: 'RAL1000',
+            quantity: 1
+        })
+    })
+})
+
 
 
 afterEach(() => {

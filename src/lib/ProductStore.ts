@@ -15,6 +15,17 @@ export default class ProductStore {
         this.products = []
     }
 
+    getDataTableArray() {
+        return this.products.map((product, index) => {
+            return {
+                id: index,
+                sku: product.sku,
+                color: product.color,
+                quantity: product.quantity
+            }
+        })
+    }
+
     private getMatchingProductIndex(product: Product): number {
         return this.products.findIndex(existingProduct =>
             existingProduct.sku === product.sku &&
