@@ -1,12 +1,17 @@
 <script lang="ts">
   import { Column, Form, Grid, Row, TextInput } from "carbon-components-svelte";
+  import { address } from "./lib/Address";
 </script>
 
 <Form>
   <Grid padding noGutter>
     <Row>
       <Column>
-        <TextInput labelText="Name" placeholder="Kundenname eingeben..." />
+        <TextInput
+          labelText="Name"
+          placeholder="Kundenname eingeben..."
+          bind:value={$address.name}
+        />
       </Column>
     </Row>
     <Row>
@@ -14,23 +19,40 @@
         <TextInput
           labelText="Telefonnummer"
           placeholder="Telefonnummer eingeben..."
+          bind:value={$address.phone}
         />
       </Column>
     </Row>
     <Row>
       <Column sm={3} md={6}>
-        <TextInput labelText="Straße" placeholder="Straße eingeben..." />
+        <TextInput
+          labelText="Straße"
+          placeholder="Straße eingeben..."
+          bind:value={$address.street}
+        />
       </Column>
       <Column sm={1} md={2}>
-        <TextInput labelText="Hausnr." placeholder="Nr..." />
+        <TextInput
+          labelText="Hausnr."
+          placeholder="Nr..."
+          bind:value={$address.number}
+        />
       </Column>
     </Row>
     <Row>
       <Column sm={1} md={3}>
-        <TextInput labelText="Postleitzahl" placeholder="PLZ..." />
+        <TextInput
+          labelText="Postleitzahl"
+          placeholder="PLZ..."
+          bind:value={$address.zip}
+        />
       </Column>
       <Column sm={3} md={5}>
-        <TextInput labelText="Stadt" placeholder="Stadt eingeben..." />
+        <TextInput
+          labelText="Stadt"
+          placeholder="Stadt eingeben..."
+          bind:value={$address.city}
+        />
       </Column>
     </Row>
     <Row>
@@ -38,6 +60,7 @@
         <TextInput
           labelText="Zusätzliche Adressangaben"
           placeholder="Zusätzliche Adressangaben eingeben..."
+          bind:value={$address.note}
         />
       </Column>
     </Row>
