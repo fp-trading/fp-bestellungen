@@ -33,29 +33,29 @@ describe('testing add()', () => {
         expect(get(products).length).toBe(1)
         expect(get(products)[0].sku).toBe('00000-000')
         expect(get(products)[0].color).toBe('')
-        expect(get(products)[0].quantity).toBe(0)
+        expect(get(products)[0].quantity).toBe('0')
     })
 
     it('combines products with same sku and color', () => {
-        productStore.add(new Product('00000-001', '', 1))
-        productStore.add(new Product('00000-001', '', 2))
+        productStore.add(new Product('00000-001', '', '1'))
+        productStore.add(new Product('00000-001', '', '2'))
 
         expect(get(products).length).toBe(1)
         expect(get(products)[0].sku).toBe('00000-001')
         expect(get(products)[0].color).toBe('')
-        expect(get(products)[0].quantity).toBe(3)
+        expect(get(products)[0].quantity).toBe('3')
     })
 
     it('does not combine products with same sku but different color', () => {
-        productStore.add(new Product('00000-001', '', 1))
-        productStore.add(new Product('00000-001', 'RAL1000', 2))
+        productStore.add(new Product('00000-001', '', '1'))
+        productStore.add(new Product('00000-001', 'RAL1000', '2'))
 
         expect(get(products).length).toBe(2)
     })
 
     it('notifies subscribers', () => {
         let counter = 0
-        products.subscribe(value => {
+        products.subscribe(() => {
             counter++
         })
         productStore.add()
@@ -70,8 +70,8 @@ describe('testing clear()', () => {
     })
 
     it('removes all products from products', () => {
-        productStore.add(new Product('00000-001', '', 1))
-        productStore.add(new Product('00000-002', '', 2))
+        productStore.add(new Product('00000-001', '', '1'))
+        productStore.add(new Product('00000-002', '', '2'))
 
         expect(get(products).length).toBe(2)
 
@@ -101,12 +101,12 @@ describe('testing remove()', () => {
 
     it('removes product with index', () => {
         productStore.add(new Product())
-        productStore.add(new Product('00000-001', '', 1))
+        productStore.add(new Product('00000-001', '', '1'))
         productStore.remove(0)
         expect(get(products).length).toBe(1)
         expect(get(products)[0].sku).toBe('00000-001')
         expect(get(products)[0].color).toBe('')
-        expect(get(products)[0].quantity).toBe(1)
+        expect(get(products)[0].quantity).toBe('1')
     })
 
     it('notifies subscribers', () => {
@@ -120,5 +120,27 @@ describe('testing remove()', () => {
         productStore.remove(0)
 
         expect(counter).toBe(2)
+    })
+})
+
+describe('test additional functionality', () => {
+    beforeEach(() => {
+        products.set([])
+    })
+
+    it('combines products if changed to same sku and color', () => {
+        productStore.add(new Product('00000-001', '', '1'))
+        productStore.add(new Product())
+        products.update(u => {
+            u[1].sku = '00000-001'
+            u[1].quantity = '2'
+
+            return u
+        })
+
+        expect(get(products).length).toBe(1)
+        expect(get(products)[0].sku).toBe('00000-001')
+        expect(get(products)[0].color).toBe('')
+        expect(get(products)[0].quantity).toBe('3')
     })
 })

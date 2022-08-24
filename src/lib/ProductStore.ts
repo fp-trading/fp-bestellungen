@@ -1,4 +1,4 @@
-import { writable, type Writable } from 'svelte/store'
+import { get, writable, type Writable } from 'svelte/store'
 import Product from './Product'
 
 export const products: Writable<Array<Product>> = writable([])
@@ -22,11 +22,28 @@ export default class ProductStore {
         })
     }
 
+    combineDuplicates() {
+        const currentProducts = get(products)
+        const withoutDuplicates = this.getStoreWithoutDuplicates()
+
+        if(currentProducts.length !== withoutDuplicates.length) products.set(withoutDuplicates)
+    }
+
+    private getStoreWithoutDuplicates() {
+        let result: Array<Product> = []
+
+        get(products).forEach(product => {
+            this.addToExistingOrCreateNew(product, result)
+        })
+
+        return result
+    }
+
     private addToExistingOrCreateNew(product: Product, products: Array<Product>): Array<Product> {
         const index = this.getMatchingIndex(product, products)
 
         if (index !== -1) {
-            products[index].quantity += product.quantity
+            products[index].quantity = (parseInt(products[index].quantity) + parseInt(product.quantity)).toString()
         } else {
             products.push(product)
         }
@@ -38,3 +55,9 @@ export default class ProductStore {
         return products.findIndex(item => item.sku === product.sku && item.color === product.color)
     }
 }
+
+// Remove duplicates
+products.subscribe(() => {
+    const productStore = new ProductStore()
+    productStore.combineDuplicates()
+})
