@@ -7,6 +7,13 @@
     ToolbarBatchActions,
   } from "carbon-components-svelte";
   import { Run, Add, TrashCan } from "carbon-icons-svelte";
+  import ProductStore, { products } from "./lib/ProductStore";
+
+  const productStore = new ProductStore();
+
+  function addEmptyProduct() {
+    productStore.add();
+  }
 </script>
 
 <DataTable
@@ -16,21 +23,30 @@
     { key: "color", value: "Farbton" },
     { key: "quantity", value: "Menge" },
   ]}
+  bind:rows={$products}
 >
   <Toolbar>
-    <Button icon={Add}>Hinzufügen</Button>
+    <Button icon={Add} on:click={addEmptyProduct}>Hinzufügen</Button>
     <ToolbarBatchActions>
       <Button icon={Run}>Ausführen</Button>
       <Button icon={TrashCan} kind="danger">Entfernen</Button>
     </ToolbarBatchActions>
   </Toolbar>
-  <svelte:fragment slot="cell" let:cell>
+  <svelte:fragment slot="cell" let:cell let:rowIndex>
     {#if cell.key === "quantity"}
-      <TextInput size="sm" value={cell.value} style="max-width: 4rem;" />
+      <TextInput
+        size="sm"
+        bind:value={$products[rowIndex].quantity}
+        style="max-width: 4rem;"
+      />
     {:else if cell.key === "color"}
-      <TextInput size="sm" value={cell.value} style="max-width: 6rem;" />
+      <TextInput
+        size="sm"
+        bind:value={$products[rowIndex].color}
+        style="max-width: 6rem;"
+      />
     {:else}
-      <TextInput size="sm" value={cell.value} />
+      <TextInput size="sm" bind:value={$products[rowIndex].sku} />
     {/if}
   </svelte:fragment>
 </DataTable>
