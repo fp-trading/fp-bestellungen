@@ -2,6 +2,7 @@ import Product from "src/lib/Product";
 import ProductStore, { products } from "./ProductStore";
 import { beforeEach, describe, expect, it } from "vitest";
 import { get } from "svelte/store";
+import { to_number } from "svelte/internal";
 
 let productStore = new ProductStore()
 
@@ -94,7 +95,7 @@ describe('testing clear()', () => {
     })
 })
 
-describe('testing remove()', () => {
+describe('testing removeIndex()', () => {
     beforeEach(() => {
         products.set([])
     })
@@ -102,7 +103,7 @@ describe('testing remove()', () => {
     it('removes product with index', () => {
         productStore.add(new Product())
         productStore.add(new Product('00000-001', '', '1'))
-        productStore.remove(0)
+        productStore.removeIndex(0)
         expect(get(products).length).toBe(1)
         expect(get(products)[0].sku).toBe('00000-001')
         expect(get(products)[0].color).toBe('')
@@ -113,11 +114,42 @@ describe('testing remove()', () => {
         let counter = 0
         productStore.add()
 
-        products.subscribe(value => {
+        products.subscribe(() => {
             counter++
         })
 
-        productStore.remove(0)
+        productStore.removeIndex(0)
+
+        expect(counter).toBe(2)
+    })
+})
+
+describe('testing removeId()', () => {
+    beforeEach(() => {
+        products.set([])
+    })
+
+    it('removes product with index', () => {
+        const productOne = new Product()
+        const productTwo = new Product('00000-001', '', '1')
+        productStore.add(productOne)
+        productStore.add(productTwo)
+        productStore.removeId(productOne.id)
+        expect(get(products).length).toBe(1)
+        expect(get(products)[0].sku).toBe('00000-001')
+        expect(get(products)[0].color).toBe('')
+        expect(get(products)[0].quantity).toBe('1')
+    })
+
+    it('notifies subscribers', () => {
+        let counter = 0
+        const product = productStore.add()
+
+        products.subscribe(() => {
+            counter++
+        })
+
+        productStore.removeId(product.id)
 
         expect(counter).toBe(2)
     })

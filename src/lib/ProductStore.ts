@@ -4,9 +4,17 @@ import Product from './Product'
 export const products: Writable<Array<Product>> = writable([])
 
 export default class ProductStore {
-    remove(index: number) {
+    removeIndex(index: number) {
         products.update(u => {
             u.splice(index, 1)
+
+            return u
+        })
+    }
+
+    removeId(id: string) {
+        products.update(u => {
+            u.splice(this.getIndexOfId(id, u), 1)
 
             return u
         })
@@ -16,10 +24,12 @@ export default class ProductStore {
         products.set([])
     }
 
-    add(product: Product = new Product()) {
+    add(product: Product = new Product()): Product {
         products.update(u => {
             return this.addToExistingOrCreateNew(product, u)
         })
+
+        return product
     }
 
     combineDuplicates() {
@@ -40,7 +50,7 @@ export default class ProductStore {
     }
 
     private addToExistingOrCreateNew(product: Product, products: Array<Product>): Array<Product> {
-        const index = this.getMatchingIndex(product, products)
+        const index = this.getIndexOfProduct(product, products)
 
         if (index !== -1) {
             products[index].quantity = (parseInt(products[index].quantity) + parseInt(product.quantity)).toString()
@@ -51,8 +61,12 @@ export default class ProductStore {
         return products
     }
 
-    private getMatchingIndex(product: Product, products: Array<Product>): number {
+    private getIndexOfProduct(product: Product, products: Array<Product>): number {
         return products.findIndex(item => item.sku === product.sku && item.color === product.color)
+    }
+
+    private getIndexOfId(id: string, products: Array<Product>): number {
+        return products.findIndex(item => item.id === id)
     }
 }
 
