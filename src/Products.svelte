@@ -11,6 +11,15 @@
 
   const productStore = new ProductStore();
 
+  let selectedRowIds: Array<string> = [];
+
+  function removeSelectedProducts() {
+    selectedRowIds.forEach((id) => {
+      productStore.removeId(id);
+    });
+    selectedRowIds = [];
+  }
+
   function addEmptyProduct() {
     productStore.add();
   }
@@ -24,12 +33,15 @@
     { key: "quantity", value: "Menge" },
   ]}
   bind:rows={$products}
+  bind:selectedRowIds
 >
   <Toolbar>
     <Button icon={Add} on:click={addEmptyProduct}>Hinzufügen</Button>
     <ToolbarBatchActions>
       <Button icon={Run}>Ausführen</Button>
-      <Button icon={TrashCan} kind="danger">Entfernen</Button>
+      <Button icon={TrashCan} kind="danger" on:click={removeSelectedProducts}
+        >Entfernen</Button
+      >
     </ToolbarBatchActions>
   </Toolbar>
   <svelte:fragment slot="cell" let:cell let:rowIndex>
