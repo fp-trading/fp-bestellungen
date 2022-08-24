@@ -1,53 +1,40 @@
+import { writable, type Writable } from 'svelte/store'
 import Product from './Product'
 
+export const products: Writable<Array<Product>> = writable([])
+
 export default class ProductStore {
-    products: Array<Product> = []
+    remove(index: number) {
+        products.update(u => {
+            u.splice(index, 1)
 
-    add(product?: Product) {
-        if (product === undefined) product = new Product()
-        this.addToMatchingOrPushNew(product, this.getMatchingProductIndex(product))
-    }
-
-    remove(sku: string, color: string) {
-        this.products.splice(this.getMatchingProductIndex(new Product(sku, color)), 1)
-    }
-
-    clear() {
-        this.products = []
-    }
-
-    getDataTableArray() {
-        return this.products.map((product, index) => {
-            return {
-                id: index,
-                sku: product.sku,
-                color: product.color,
-                quantity: product.quantity
-            }
+            return u
         })
     }
 
-    private getMatchingProductIndex(product: Product): number {
-        return this.products.findIndex(existingProduct =>
-            existingProduct.sku === product.sku &&
-            existingProduct.color === product.color
-        )
+    clear() {
+        products.set([])
     }
 
-    private addToMatchingOrPushNew(product: Product, matchingProductIndex: number) {
-        const noMatch = -1
-        if (matchingProductIndex === noMatch) {
-            this.createNew(product)
+    add(product: Product = new Product()) {
+        products.update(u => {
+            return this.addToExistingOrCreateNew(product, u)
+        })
+    }
+
+    private addToExistingOrCreateNew(product: Product, products: Array<Product>): Array<Product> {
+        const index = this.getMatchingIndex(product, products)
+
+        if (index !== -1) {
+            products[index].quantity += product.quantity
         } else {
-            this.addToMatching(product, matchingProductIndex)
+            products.push(product)
         }
+
+        return products
     }
 
-    private createNew(product: Product) {
-        this.products.push(product)
-    }
-
-    private addToMatching(product: Product, matchingProductIndex: number) {
-        this.products[matchingProductIndex].quantity += product.quantity
+    private getMatchingIndex(product: Product, products: Array<Product>): number {
+        return products.findIndex(item => item.sku === product.sku && item.color === product.color)
     }
 }

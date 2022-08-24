@@ -7,7 +7,6 @@
     ToolbarBatchActions,
   } from "carbon-components-svelte";
   import { Run, Add, TrashCan } from "carbon-icons-svelte";
-  import { products } from "./data/products";
 </script>
 
 <DataTable
@@ -17,7 +16,6 @@
     { key: "color", value: "Farbton" },
     { key: "quantity", value: "Menge" },
   ]}
-  rows={$products.getDataTableArray()}
 >
   <Toolbar>
     <Button icon={Add}>Hinzufügen</Button>
