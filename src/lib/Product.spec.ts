@@ -25,3 +25,9 @@ it('can be created with custom values', () => {
     expect(thirdProduct.color).toBe('')
     expect(thirdProduct.quantity).toBe(0)
 })
+
+it('get an uuid assigned', () => {
+    const product = new Product()
+
+    expect(product.id).toMatch(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/)
+})

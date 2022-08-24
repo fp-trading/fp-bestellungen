@@ -18,32 +18,39 @@ describe('testing add()', () => {
     })
 
     it('ads multiple products to product sotre', () => {
-        productStore.add(new Product('00000-001'))
-        productStore.add(new Product('00000-002'))
+        const productOne = new Product('00000-001')
+        const productTwo = new Product('00000-002')
+        productStore.add(productOne)
+        productStore.add(productTwo)
 
-        expect(get(products)).toContainEqual(new Product('00000-001'))
-        expect(get(products)).toContainEqual(new Product('00000-002'))
+        expect(get(products)).toContain(productOne)
+        expect(get(products)).toContain(productTwo)
     })
 
-    it('ads default product if no argument given', () => {
+    it('adds default product if no argument given', () => {
         productStore.add()
 
-        expect(get(products)).toContainEqual(new Product())
+        expect(get(products).length).toBe(1)
+        expect(get(products)[0].sku).toBe('00000-000')
+        expect(get(products)[0].color).toBe('')
+        expect(get(products)[0].quantity).toBe(0)
     })
 
     it('combines products with same sku and color', () => {
         productStore.add(new Product('00000-001', '', 1))
         productStore.add(new Product('00000-001', '', 2))
 
-        expect(get(products)).toContainEqual(new Product('00000-001', '', 3))
+        expect(get(products).length).toBe(1)
+        expect(get(products)[0].sku).toBe('00000-001')
+        expect(get(products)[0].color).toBe('')
+        expect(get(products)[0].quantity).toBe(3)
     })
 
     it('does not combine products with same sku but different color', () => {
         productStore.add(new Product('00000-001', '', 1))
         productStore.add(new Product('00000-001', 'RAL1000', 2))
 
-        expect(get(products)).toContainEqual(new Product('00000-001', '', 1))
-        expect(get(products)).toContainEqual(new Product('00000-001', 'RAL1000', 2))
+        expect(get(products).length).toBe(2)
     })
 
     it('notifies subscribers', () => {
@@ -97,7 +104,9 @@ describe('testing remove()', () => {
         productStore.add(new Product('00000-001', '', 1))
         productStore.remove(0)
         expect(get(products).length).toBe(1)
-        expect(get(products)).toContainEqual(new Product('00000-001', '', 1))
+        expect(get(products)[0].sku).toBe('00000-001')
+        expect(get(products)[0].color).toBe('')
+        expect(get(products)[0].quantity).toBe(1)
     })
 
     it('notifies subscribers', () => {
