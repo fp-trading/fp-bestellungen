@@ -1,10 +1,10 @@
-import crypto from 'crypto'
+import { v4 as uuidv4 } from 'uuid'
 
 export default class Product {
     sku = '00000-000'
     color = ''
     quantity = 0
-    id = crypto.randomUUID()
+    id = uuidv4()
 
     constructor(sku?: string, color?: string, quantity?: number) {
         if (sku !== undefined) this.sku = sku
