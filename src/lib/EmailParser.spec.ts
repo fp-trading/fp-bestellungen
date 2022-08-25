@@ -1,11 +1,16 @@
 import { get } from "svelte/store";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import Address, { address } from "./Address";
 import EmailParser from "./EmailParser";
+import { products } from "./ProductStore";
 
 const emailParser = new EmailParser()
 
 describe('test email parser parses address', () => {
+    beforeEach(() => {
+        address.set(new Address())
+    })
+
     it('parses name', () => {
         emailParser.parse(emailWithOneProduct)
         expect(get(address).name).toBe('Vitali Hebel')
@@ -79,6 +84,50 @@ describe('test email parser parses address', () => {
 
         emailParser.parse(emailWithOneColoredProduct)
         expect(get(address).city).toBe('Bad Waldsee')
+    })
+})
+
+describe('test email parser parses products', () => {
+    beforeEach(() => {
+        products.set([])
+    })
+
+    it('parses sku from order with one item', () => {
+        emailParser.parse(emailWithOneProduct)
+        expect(get(products)[0].sku).toBe('00714-030')
+
+        products.set([])
+
+        emailParser.parse(emailWithOneColoredProduct)
+        expect(get(products)[0].sku).toBe('00269-060')
+    })
+
+    it('parses sku from order with multiple items', () => {
+        emailParser.parse(emailWithMultipleProducts)
+
+        expect(get(products)[0].sku).toBe('00217-080')
+        expect(get(products)[1].sku).toBe('00518-002')
+    })
+
+    it('parses color', () => {
+        emailParser.parse(emailWithOneColoredProduct)
+        expect(get(products)[0].color).toBe('CPD1289')
+
+        products.set([])
+
+        emailParser.parse(emailWithMultipleProducts)
+        expect(get(products)[0].color).toBe('RAL7046')
+        expect(get(products)[1].color).toBe('')
+    })
+
+    it('parses quantity', () => {
+        emailParser.parse(emailWithOneProduct)
+        expect(get(products)[0].quantity).toBe('1')
+
+        products.set([])
+
+        emailParser.parse(emailWithQuantity)
+        expect(get(products)[0].quantity).toBe('6')
     })
 })
 
@@ -257,6 +306,132 @@ Phone: 0170 5335677
 Kunden Email:
 
 stefan.kueblbeck@t-online.de
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+const emailWithMultipleProducts = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224044.
+
+Anzahl der Artikel: 2
+
+Anzahl der Produkte: 2
+
+
+Bestellung:
+
+Artikel: StoColor Silco - FK01 / 5L
+
+Variante: FK01 / 5L
+
+Produkteigenschaften:
+
+Farbton: RAL7046
+SKU: 00217-080
+
+Anzahl: 1
+
+
+Artikel: StoPrim Plex - 20L
+
+Variante: 20L
+
+SKU: 00518-002
+
+Anzahl: 1
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0160 94919002
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+Matthias Anton |
+
+Am Spitzenberg 11
+
+Blieskastel,
+
+66440
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0160 94919002
+
+
+Kunden Email:
+
+matthias.anton1@web.de
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+const emailWithQuantity = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell In Fill - 15KG
+
+Variante: 15KG
+
+SKU: 02970-001
+
+Anzahl: 6
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+dimitrij mertes |
+
+Rohrweg 37
+
+Kutenholz,
+
+27449
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0176 64212576
+
+
+Kunden Email:
+
+dimon2@gmx.net
 
 
 Vielen Dank,
