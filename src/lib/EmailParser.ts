@@ -4,13 +4,13 @@ export default class EmailParser {
     private streetNumberRegex = /[0-9]+[ a-zA-Z]{0,2}$/;
 
     parse(email: string) {
-        address.set(this.parseAddress(email))
+        this.parseAddress(email)
     }
     
     parseAddress(email: string) {
         let addressLines = this.getAddressLines(email)
         
-        return new Address(
+        address.set(new Address(
             this.parseName(addressLines.name),
             this.parsePhone(addressLines.rest),
             this.parseStreet(addressLines.street),
@@ -18,7 +18,7 @@ export default class EmailParser {
             this.parseZipCode(addressLines.zip),
             this.parseCity(addressLines.city),
             this.parseCompany(addressLines.name)
-        )
+        ))
     }
     
     private getAddressLines(email: string): { name: string, street: string, city: string, zip: string, rest: string } {
