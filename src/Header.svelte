@@ -6,6 +6,7 @@
   } from "carbon-components-svelte";
   import { DocumentImport } from "carbon-icons-svelte";
   import EmailParser from "./lib/EmailParser";
+  import Notifier, { Notification } from "./lib/Notification";
 
   async function handleImportClick() {
     const clipboardContent = await navigator.clipboard.readText();
@@ -21,7 +22,9 @@
   }
 
   function handleParserError(error: Error) {
-    console.log(error.message);
+    new Notifier().add(
+      new Notification("error", false, "Fehler", error.message)
+    );
   }
 </script>
 
