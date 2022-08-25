@@ -25,6 +25,61 @@ describe('test email parser parses address', () => {
         emailParser.parse(emailWithOneProduct)
         expect(get(address).company).toBe('')
     })
+
+    it('parses phone', () => {
+        emailParser.parse(emailWithOneProduct)
+        expect(get(address).phone).toBe('01772702733')
+
+        address.set(new Address())
+
+        emailParser.parse(emailWithOneColoredProduct)
+        expect(get(address).phone).toBe('017622079309')
+    })
+
+    it('parses street', () => {
+        emailParser.parse(emailWithOneProduct)
+        expect(get(address).street).toBe('Bonner Str.')
+
+        address.set(new Address())
+
+        emailParser.parse(emailWithOneColoredProduct)
+        expect(get(address).street).toBe('Frauenbergstraße')
+    })
+
+    it('parses street numbers', () => {
+        emailParser.parse(emailWithOneProduct)
+        expect(get(address).number).toBe('44')
+
+        address.set(new Address())
+
+        emailParser.parse(emailWithOneColoredProduct)
+        expect(get(address).number).toBe('41 b')
+
+        address.set(new Address())
+
+        emailParser.parse(emailWithCompany)
+        expect(get(address).number).toBe('1A')
+    })
+
+    it('parses zip code', () => {
+        emailParser.parse(emailWithOneProduct)
+        expect(get(address).zip).toBe('53567')
+
+        address.set(new Address())
+
+        emailParser.parse(emailWithOneColoredProduct)
+        expect(get(address).zip).toBe('88339')
+    })
+
+    it('parses city', () => {
+        emailParser.parse(emailWithOneProduct)
+        expect(get(address).city).toBe('Asbach')
+
+        address.set(new Address())
+
+        emailParser.parse(emailWithOneColoredProduct)
+        expect(get(address).city).toBe('Bad Waldsee')
+    })
 })
 
 const emailWithOneProduct = `Sehr geehrte Damen und Herren,
@@ -124,7 +179,7 @@ Lieferadresse:
 
 Andreas Marotti |
 
-Frauenbergstraße 41
+Frauenbergstraße 41 b
 
 Bad Waldsee,
 
@@ -186,7 +241,7 @@ Lieferadresse:
 
 Stefan Küblbeck | Elmek - Inhaber Stefan Küblbeck
 
-Tannenstraße 1
+Tannenstraße 1A
 
 Leinburg,
 
