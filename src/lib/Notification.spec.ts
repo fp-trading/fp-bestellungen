@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import Notification from './Notification'
+import { Notification } from './Notification'
 
 describe('notification class', () => {
     it('creates notification with default values', () => {
@@ -12,13 +12,12 @@ describe('notification class', () => {
         expect(notification.timestamp).toBeGreaterThan(new Date().getTime() - 100)
         expect(notification.title).toBe('')
         expect(notification.subtitle).toBe('')
-        expect(notification.caption).toBe('')
         expect(notification.iconDescription).toBe('')
     })
 
     it('creates notification with custom values', () => {
         const date = new Date()
-        const notification = new Notification('info', true, 4000, 'Info', 'Interessante Info', date.toString(), 'Info')
+        const notification = new Notification('info', true, 'Info', 'Interessante Info', 'Info', 4000)
 
         expect(notification.kind).toBe('info')
         expect(notification.lowContrast).toBe(true)
@@ -27,7 +26,6 @@ describe('notification class', () => {
         expect(notification.timestamp).toBeGreaterThan(new Date().getTime() - 100)
         expect(notification.title).toBe('Info')
         expect(notification.subtitle).toBe('Interessante Info')
-        expect(notification.caption).toBe(date.toString())
         expect(notification.iconDescription).toBe('Info')
     })
 })
