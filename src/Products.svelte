@@ -27,6 +27,7 @@
 
 <DataTable
   batchSelection
+  expandable
   headers={[
     { key: "sku", value: "SKU" },
     { key: "color", value: "Farbton" },
@@ -60,5 +61,8 @@
     {:else}
       <TextInput size="sm" bind:value={$products[rowIndex].sku} />
     {/if}
+  </svelte:fragment>
+  <svelte:fragment slot="expanded-row" let:row>
+    Produkttitel: {row.title}
   </svelte:fragment>
 </DataTable>
