@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import Address, { address } from "../Address";
 import EmailParser from "./EmailParser";
 import Product from "../Product";
-import { products } from "../ProductStore";
+import { products, selectedProductIds } from "../ProductStore";
 
 const emailParser = new EmailParser()
 
@@ -145,6 +145,11 @@ describe('test email parser parses products', () => {
 
         emailParser.parse(emailWithOneProduct)
         expect(get(products).length).toBe(1)
+    })
+
+    it('selects all products after parse', () => {
+        emailParser.parse(emailWithMultipleProducts)
+        expect(get(products).length).toBe(get(selectedProductIds).length)
     })
 })
 

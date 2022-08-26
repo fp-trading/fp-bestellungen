@@ -7,17 +7,18 @@
     ToolbarBatchActions,
   } from "carbon-components-svelte";
   import { Run, Add, TrashCan } from "carbon-icons-svelte";
-  import ProductStore, { products } from "./lib/ProductStore";
+  import ProductStore, {
+    products,
+    selectedProductIds,
+  } from "./lib/ProductStore";
 
   const productStore = new ProductStore();
 
-  let selectedRowIds: Array<string> = [];
-
   function removeSelectedProducts() {
-    selectedRowIds.forEach((id) => {
+    $selectedProductIds.forEach((id) => {
       productStore.removeId(id);
     });
-    selectedRowIds = [];
+    $selectedProductIds = [];
   }
 
   function addEmptyProduct() {
@@ -34,7 +35,7 @@
     { key: "quantity", value: "Menge" },
   ]}
   bind:rows={$products}
-  bind:selectedRowIds
+  bind:selectedRowIds={$selectedProductIds}
 >
   <Toolbar>
     <Button icon={Add} on:click={addEmptyProduct}>Hinzufügen</Button>

@@ -1,5 +1,5 @@
 import Product from "../Product";
-import { products } from "../ProductStore";
+import ProductStore from "../ProductStore";
 
 export default class ProductsParser {
     parse(email: string): [Error?] {
@@ -24,19 +24,19 @@ export default class ProductsParser {
     }
 
     private addProductsToStore(productStrings: string[], error: Error) {
-        products.update(u => {
-            u = [];
+        const productStore = new ProductStore()
+        productStore.clear()
 
-            productStrings.forEach(product => {
-                try {
-                    u.push(this.parseProduct(product));
-                } catch (err) {
-                    error = err;
-                }
-            });
-
-            return u;
+        productStrings.forEach(product => {
+            try {
+                productStore.add(this.parseProduct(product))
+            } catch (err) {
+                error = err;
+            }
         });
+
+        productStore.selectAllProducts()
+
         return error;
     }
 

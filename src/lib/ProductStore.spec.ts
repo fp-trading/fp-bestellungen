@@ -1,8 +1,7 @@
 import Product from "src/lib/Product";
-import ProductStore, { products } from "./ProductStore";
+import ProductStore, { products, selectedProductIds } from "./ProductStore";
 import { beforeEach, describe, expect, it } from "vitest";
 import { get } from "svelte/store";
-import { to_number } from "svelte/internal";
 
 let productStore = new ProductStore()
 
@@ -174,5 +173,20 @@ describe('test additional functionality', () => {
         expect(get(products)[0].sku).toBe('00000-001')
         expect(get(products)[0].color).toBe('')
         expect(get(products)[0].quantity).toBe('3')
+    })
+
+    it('selectAll() selects all products', () => {
+        const firstProduct = new Product('00000-000')
+        const secondProduct = new Product('00000-001')
+        const thirdProduct = new Product('00000-002')
+        productStore.add(firstProduct)
+        productStore.add(secondProduct)
+        productStore.add(thirdProduct)
+
+        productStore.selectAllProducts()
+
+        expect(get(selectedProductIds)).toContain(firstProduct.id)
+        expect(get(selectedProductIds)).toContain(secondProduct.id)
+        expect(get(selectedProductIds)).toContain(thirdProduct.id)
     })
 })

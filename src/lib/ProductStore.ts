@@ -2,6 +2,7 @@ import { get, writable, type Writable } from 'svelte/store'
 import Product from './Product'
 
 export const products: Writable<Array<Product>> = writable([])
+export const selectedProductIds: Writable<Array<string>> = writable([])
 
 export default class ProductStore {
     removeIndex(index: number) {
@@ -37,6 +38,12 @@ export default class ProductStore {
         const withoutDuplicates = this.getStoreWithoutDuplicates()
 
         if(currentProducts.length !== withoutDuplicates.length) products.set(withoutDuplicates)
+    }
+
+    selectAllProducts() {
+        const allIds = get(products).map(product => product.id)
+
+        selectedProductIds.set(allIds)
     }
 
     private getStoreWithoutDuplicates() {
