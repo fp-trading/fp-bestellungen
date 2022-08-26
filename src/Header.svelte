@@ -5,7 +5,7 @@
     HeaderUtilities,
   } from "carbon-components-svelte";
   import { DocumentImport } from "carbon-icons-svelte";
-  import EmailParser from "./lib/EmailParser";
+  import EmailParser from "./lib/Parser/EmailParser";
   import Notifier, { Notification } from "./lib/Notification";
 
   async function handleImportClick() {
