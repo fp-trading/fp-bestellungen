@@ -150,6 +150,10 @@ describe('test error handle', () => {
         address.set(new Address())
     })
 
+    it('throws correct error when empty string', () => {
+        expect(() => {emailParser.parse('')}).toThrowError('Zwischenablage ist leer!')
+    })
+
     it('throws correct error when address not there', () => {
         expect(() => {emailParser.parse(emailWithMissingAddress)}).toThrowError('Adresse nicht gefunden!')
     })
@@ -254,6 +258,25 @@ describe('test error handle', () => {
         expect(currentAddress.zip).toBe('27449')
         expect(currentAddress.city).toBe('')
         expect(get(products).length).toBe(1)
+    })
+
+    it('throws correct error when order is missing', () => {
+        expect(() => {emailParser.parse(emailWithMissingOrder)}).toThrowError('Keine Bestellung enthalten!')
+    })
+
+    it('throws correct error when products are missing', () => {
+        expect(() => {emailParser.parse(emailWithMissingProducts)}).toThrowError('Keine Produkte enthalten!')
+    })
+
+    it('throws correct error when product has wrong sku', () => {
+        expect(() => {emailParser.parse(emailWithBrokenSKU)}).toThrowError('Fehlerhafte SKU!')
+        expect(get(products).length).toBe(1)
+    })
+
+    it('leaves quantity empty if missing', () => {
+        emailParser.parse(emailWithMissingQuantity)
+        expect(get(products).length).toBe(2)
+        expect(get(products)[0].quantity).toBe('')
     })
 })
 
@@ -1077,3 +1100,246 @@ dimon2@gmx.net
 Vielen Dank,
 
 Ihr Farben-Profi Team`
+
+
+const emailWithMissingOrder = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+
+Artikel: StoLevell In Fill - 15KG
+
+Variante: 15KG
+
+SKU: 02970-001
+
+Anzahl: 6
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+dimitrij mertes |
+
+Rohrweg 37
+
+Kutenholz,
+
+27449
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0176 64212576
+
+
+Kunden Email:
+
+dimon2@gmx.net
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+const emailWithMissingProducts = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+dimitrij mertes |
+
+Rohrweg 37
+
+Kutenholz,
+
+27449
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0176 64212576
+
+
+Kunden Email:
+
+dimon2@gmx.net
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+
+const emailWithBrokenSKU = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224042.
+
+Anzahl der Artikel: 1
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell Novo - 15kg
+
+Variante: 15kg
+
+SKU: 00714-03
+
+Anzahl: 1
+
+
+Artikel: StoLevell Novo - 15kg
+
+Variante: 15kg
+
+SKU: 00714-031
+
+Anzahl: 1
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0177 2702733
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+Vitali Hebel |
+
+Bonner Str. 44
+
+Asbach,
+
+53567
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0177 2702733
+
+
+Kunden Email:
+
+vhebel@vhebel.de
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team
+`
+
+
+const emailWithMissingQuantity = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224042.
+
+Anzahl der Artikel: 1
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell Novo - 15kg
+
+Variante: 15kg
+
+SKU: 00714-032
+
+Anzahl: 
+
+
+Artikel: StoLevell Novo - 15kg
+
+Variante: 15kg
+
+SKU: 00714-031
+
+Anzahl: 1
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0177 2702733
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+Vitali Hebel |
+
+Bonner Str. 44
+
+Asbach,
+
+53567
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0177 2702733
+
+
+Kunden Email:
+
+vhebel@vhebel.de
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team
+`
