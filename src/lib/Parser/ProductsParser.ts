@@ -44,8 +44,14 @@ export default class ProductsParser {
         return new Product(
             this.parseSKU(productString),
             this.parseColor(productString),
-            this.parseQuantity(productString)
+            this.parseQuantity(productString),
+            this.parseTitle(productString)
         )
+    }
+
+    private parseTitle(productString: string): string {
+        const titleRegex = /Artikel: (.*)/
+        return titleRegex.test(productString) ? titleRegex.exec(productString)[1] : ''
     }
 
     private parseQuantity(productString: string): string {

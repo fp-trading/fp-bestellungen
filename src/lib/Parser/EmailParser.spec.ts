@@ -131,6 +131,11 @@ describe('test email parser parses products', () => {
         expect(get(products)[0].quantity).toBe('6')
     })
 
+    it('parses title', () => {
+        emailParser.parse(emailWithOneProduct)
+        expect(get(products)[0].title).toBe('StoLevell Novo - 15kg')
+    })
+
     it('clears products before parse', () => {
         products.update(u => {
             u.push(new Product())
