@@ -5,7 +5,7 @@ import CityParser from "./CityParser";
 import CompanyParser from "./CompanyParser";
 import NameParser from "./NameParser";
 import PhoneParser from "./PhoneParser";
-import Address, { address } from "./Address";
+import Address, { address } from "../Address";
 
 export default class AddressParser {
     parse(email: string): [Error?] {

@@ -1,9 +1,9 @@
 import { get } from "svelte/store";
 import { beforeEach, describe, expect, it } from "vitest";
-import Address, { address } from "./Address";
+import Address, { address } from "../Address";
 import EmailParser from "./EmailParser";
-import Product from "./Product";
-import { products } from "./ProductStore";
+import Product from "../Product";
+import { products } from "../ProductStore";
 
 const emailParser = new EmailParser()
 

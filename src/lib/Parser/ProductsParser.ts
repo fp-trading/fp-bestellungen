@@ -1,5 +1,5 @@
-import Product from "./Product";
-import { products } from "./ProductStore";
+import Product from "../Product";
+import { products } from "../ProductStore";
 
 export default class ProductsParser {
     parse(email: string): [Error?] {
