@@ -8,6 +8,7 @@ describe('check default values', () => {
         expect(product.sku).toBe('00000-000')
         expect(product.color).toBe('')
         expect(product.quantity).toBe('0')
+        expect(product.title).toBe('')
     })
 
     it('get an uuid assigned', () => {
@@ -23,6 +24,7 @@ describe('check custom values', () => {
         expect(product.sku).toBe('00000-003')
         expect(product.color).toBe('')
         expect(product.quantity).toBe('0')
+        expect(product.title).toBe('')
     })
 
     it('can be created with custom sku and color', () => {
@@ -30,12 +32,22 @@ describe('check custom values', () => {
         expect(product.sku).toBe('00000-002')
         expect(product.color).toBe('RAL1000')
         expect(product.quantity).toBe('0')
+        expect(product.title).toBe('')
     })
 
     it('can be created with custom sku, color and quantity', () => {
-        const firstProduct = new Product('00000-001', 'RAL1000', '1')
-        expect(firstProduct.sku).toBe('00000-001')
-        expect(firstProduct.color).toBe('RAL1000')
-        expect(firstProduct.quantity).toBe('1')
+        const product = new Product('00000-001', 'RAL1000', '1')
+        expect(product.sku).toBe('00000-001')
+        expect(product.color).toBe('RAL1000')
+        expect(product.quantity).toBe('1')
+        expect(product.title).toBe('')
+    })
+
+    it('can be created with custom sku, color, quantity and title', () => {
+        const product = new Product('00000-001', 'RAL1000', '1', 'StoProdukt Beispiel')
+        expect(product.sku).toBe('00000-001')
+        expect(product.color).toBe('RAL1000')
+        expect(product.quantity).toBe('1')
+        expect(product.title).toBe('StoProdukt Beispiel')
     })
 })
