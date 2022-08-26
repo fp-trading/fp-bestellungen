@@ -2,6 +2,7 @@ import { get } from "svelte/store";
 import { beforeEach, describe, expect, it } from "vitest";
 import Address, { address } from "./Address";
 import EmailParser from "./EmailParser";
+import Product from "./Product";
 import { products } from "./ProductStore";
 
 const emailParser = new EmailParser()
@@ -129,7 +130,133 @@ describe('test email parser parses products', () => {
         emailParser.parse(emailWithQuantity)
         expect(get(products)[0].quantity).toBe('6')
     })
+
+    it('clears products before parse', () => {
+        products.update(u => {
+            u.push(new Product())
+
+            return u
+        })
+
+        emailParser.parse(emailWithOneProduct)
+        expect(get(products).length).toBe(1)
+    })
 })
+
+
+describe('test error handle', () => {
+    beforeEach(() => {
+        products.set([])
+        address.set(new Address())
+    })
+
+    it('throws correct error when address not there', () => {
+        expect(() => {emailParser.parse(emailWithMissingAddress)}).toThrowError('Adresse nicht gefunden!')
+    })
+
+    it('throws correct error when address is broken', () => {
+        expect(()=> {emailParser.parse(emailWithBrokenAddress)}).toThrowError('Adresse fehlerhaft!')
+    })
+
+    it('throws correct error when name is broken', () => {
+        expect(() => {emailParser.parse(emailWithBrokenName)}).toThrowError('Name fehlerhaft!')
+
+        const currentAddress = get(address)
+        expect(currentAddress.name).toBe('')
+        expect(currentAddress.company).toBe('')
+        expect(currentAddress.phone).toBe('017664212576')
+        expect(currentAddress.street).toBe('Rohrweg')
+        expect(currentAddress.number).toBe('37')
+        expect(currentAddress.zip).toBe('27449')
+        expect(currentAddress.city).toBe('Kutenholz')
+        expect(get(products).length).toBe(1)
+    })
+
+    it('throws correct error when company is broken', () => {
+        expect(() => {emailParser.parse(emailWithBrokenCompany)}).toThrowError('Fehlendes "|" in der Namenzeile!')
+
+        const currentAddress = get(address)
+        expect(currentAddress.name).toBe('dimitri')
+        expect(currentAddress.company).toBe('')
+        expect(currentAddress.phone).toBe('017664212576')
+        expect(currentAddress.street).toBe('Rohrweg')
+        expect(currentAddress.number).toBe('37')
+        expect(currentAddress.zip).toBe('27449')
+        expect(currentAddress.city).toBe('Kutenholz')
+        expect(get(products).length).toBe(1)
+    })
+
+    it('throws correct error when phone is missing', () => {
+        expect(() => {emailParser.parse(emailWithMissingPhone)}).toThrowError('Telefonnummer fehlerhaft!')
+
+        const currentAddress = get(address)
+        expect(currentAddress.name).toBe('dimitri')
+        expect(currentAddress.company).toBe('')
+        expect(currentAddress.phone).toBe('')
+        expect(currentAddress.street).toBe('Rohrweg')
+        expect(currentAddress.number).toBe('37')
+        expect(currentAddress.zip).toBe('27449')
+        expect(currentAddress.city).toBe('Kutenholz')
+        expect(get(products).length).toBe(1)
+    })
+
+    it('throws correct error when street is missing', () => {
+        expect(() => {emailParser.parse(emailWithMissingStreet)}).toThrowError('Straße fehlerhaft!')
+
+        const currentAddress = get(address)
+        expect(currentAddress.name).toBe('dimitri')
+        expect(currentAddress.company).toBe('')
+        expect(currentAddress.phone).toBe('017664212576')
+        expect(currentAddress.street).toBe('')
+        expect(currentAddress.number).toBe('37')
+        expect(currentAddress.zip).toBe('27449')
+        expect(currentAddress.city).toBe('Kutenholz')
+        expect(get(products).length).toBe(1)
+    })
+
+    it('throws correct error when street number is missing', () => {
+        expect(() => {emailParser.parse(emailWithMissingStreetNumber)}).toThrowError('Hausnummer fehlerhaft!')
+
+        const currentAddress = get(address)
+        expect(currentAddress.name).toBe('dimitri')
+        expect(currentAddress.company).toBe('')
+        expect(currentAddress.phone).toBe('017664212576')
+        expect(currentAddress.street).toBe('Rohrweg')
+        expect(currentAddress.number).toBe('')
+        expect(currentAddress.zip).toBe('27449')
+        expect(currentAddress.city).toBe('Kutenholz')
+        expect(get(products).length).toBe(1)
+    })
+
+    it('throws correct error when zip is missing', () => {
+        expect(() => {emailParser.parse(emailWithMissingZip)}).toThrowError('Postleitzahl fehlerhaft!')
+
+        const currentAddress = get(address)
+        expect(currentAddress.name).toBe('dimitri')
+        expect(currentAddress.company).toBe('')
+        expect(currentAddress.phone).toBe('017664212576')
+        expect(currentAddress.street).toBe('Rohrweg')
+        expect(currentAddress.number).toBe('37')
+        expect(currentAddress.zip).toBe('')
+        expect(currentAddress.city).toBe('Kutenholz')
+        expect(get(products).length).toBe(1)
+    })
+
+    it('throws correct error when city is missing', () => {
+        expect(() => {emailParser.parse(emailWithMissingCity)}).toThrowError('Stadt fehlerhaft!')
+
+        const currentAddress = get(address)
+        expect(currentAddress.name).toBe('dimitri')
+        expect(currentAddress.company).toBe('')
+        expect(currentAddress.phone).toBe('017664212576')
+        expect(currentAddress.street).toBe('Rohrweg')
+        expect(currentAddress.number).toBe('37')
+        expect(currentAddress.zip).toBe('27449')
+        expect(currentAddress.city).toBe('')
+        expect(get(products).length).toBe(1)
+    })
+})
+
 
 const emailWithOneProduct = `Sehr geehrte Damen und Herren,
 
@@ -419,6 +546,519 @@ dimitrij mertes |
 Rohrweg 37
 
 Kutenholz,
+
+27449
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0176 64212576
+
+
+Kunden Email:
+
+dimon2@gmx.net
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+
+
+const emailWithMissingAddress = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell In Fill - 15KG
+
+Variante: 15KG
+
+SKU: 02970-001
+
+Anzahl: 6
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+
+dimitrij mertes |
+
+Rohrweg 37
+
+Kutenholz,
+
+27449
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0176 64212576
+
+
+Kunden Email:
+
+dimon2@gmx.net
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+
+
+const emailWithBrokenAddress = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell In Fill - 15KG
+
+Variante: 15KG
+
+SKU: 02970-001
+
+Anzahl: 6
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+
+
+Kunden Email:
+
+dimon2@gmx.net
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+
+
+const emailWithBrokenName = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell In Fill - 15KG
+
+Variante: 15KG
+
+SKU: 02970-001
+
+Anzahl: 6
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+|
+
+Rohrweg 37
+
+Kutenholz,
+
+27449
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0176 64212576
+
+
+Kunden Email:
+
+dimon2@gmx.net
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+
+
+const emailWithBrokenCompany = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell In Fill - 15KG
+
+Variante: 15KG
+
+SKU: 02970-001
+
+Anzahl: 6
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+dimitri
+
+Rohrweg 37
+
+Kutenholz,
+
+27449
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0176 64212576
+
+
+Kunden Email:
+
+dimon2@gmx.net
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+
+
+const emailWithMissingPhone = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell In Fill - 15KG
+
+Variante: 15KG
+
+SKU: 02970-001
+
+Anzahl: 6
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+dimitri |
+
+Rohrweg 37
+
+Kutenholz,
+
+27449
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 
+
+
+Kunden Email:
+
+dimon2@gmx.net
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+
+const emailWithMissingStreet = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell In Fill - 15KG
+
+Variante: 15KG
+
+SKU: 02970-001
+
+Anzahl: 6
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+dimitri |
+
+ 37
+
+Kutenholz,
+
+27449
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0176 64212576
+
+
+Kunden Email:
+
+dimon2@gmx.net
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+
+const emailWithMissingStreetNumber = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell In Fill - 15KG
+
+Variante: 15KG
+
+SKU: 02970-001
+
+Anzahl: 6
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+dimitri |
+
+Rohrweg 
+
+Kutenholz,
+
+27449
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0176 64212576
+
+
+Kunden Email:
+
+dimon2@gmx.net
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+
+const emailWithMissingZip = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell In Fill - 15KG
+
+Variante: 15KG
+
+SKU: 02970-001
+
+Anzahl: 6
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+dimitri |
+
+Rohrweg 37
+
+Kutenholz,
+
+0
+
+Deutschland
+
+Adresszusatz:
+
+Phone: 0176 64212576
+
+
+Kunden Email:
+
+dimon2@gmx.net
+
+
+Vielen Dank,
+
+Ihr Farben-Profi Team`
+
+
+const emailWithMissingCity = `Sehr geehrte Damen und Herren,
+
+
+bitte folgende Bestellung an den Kunden liefern: #202224040.
+
+Anzahl der Artikel: 6
+
+Anzahl der Produkte: 1
+
+
+Bestellung:
+
+Artikel: StoLevell In Fill - 15KG
+
+Variante: 15KG
+
+SKU: 02970-001
+
+Anzahl: 6
+
+
+Kunden Bestellanmerkungen:
+
+Bitte eine Stunde vorher Avis: 0176 64212576
+
+
+Wunschliefertermin:
+
+23.08.2022
+
+
+Lieferadresse:
+
+dimitri |
+
+Rohrweg 37
+
+,
 
 27449
 
