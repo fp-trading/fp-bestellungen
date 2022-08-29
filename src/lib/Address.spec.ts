@@ -13,8 +13,8 @@ describe('test adress constructor', () => {
         expect(address.company).toBe('')
     })
 
-    it('creates address with company', () => {
-        const address = new Address('Jonas Abrahams', '015120596734', 'Im Kleinfeld', '53', '67227', 'Frankenthal (Pfalz)', 'jabrms GmbH')
+    it('creates address with company and commission', () => {
+        const address = new Address('Jonas Abrahams', '015120596734', 'Im Kleinfeld', '53', '67227', 'Frankenthal (Pfalz)', 'jabrms GmbH', '#20220829')
         expect(address.name).toBe('Jonas Abrahams')
         expect(address.phone).toBe('015120596734')
         expect(address.street).toBe('Im Kleinfeld')
@@ -22,5 +22,6 @@ describe('test adress constructor', () => {
         expect(address.zip).toBe('67227')
         expect(address.city).toBe('Frankenthal (Pfalz)')
         expect(address.company).toBe('jabrms GmbH')
+        expect(address.commission).toBe('#20220829')
     })
 })
