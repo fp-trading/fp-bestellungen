@@ -1,17 +1,21 @@
 <script lang="ts">
   import {
+    Button,
     Header,
     HeaderGlobalAction,
     HeaderUtilities,
   } from "carbon-components-svelte";
   import {
-    DocumentImport,
+    TaskAdd,
+    TaskRemove,
     UserAvatar,
     UserAvatarFilled,
   } from "carbon-icons-svelte";
   import EmailParser from "./lib/Parser/EmailParser";
   import Notifier, { Notification } from "./lib/Notification";
   import { loginData } from "./lib/LoginDataStore";
+  import Address, { address } from "./lib/Address";
+  import { products, selectedProductIds } from "./lib/ProductStore";
 
   let loginButtonIcon = UserAvatar;
   $: loginButtonIcon = $loginData.isLoginDataStored()
@@ -25,6 +29,12 @@
   async function handleImportClick() {
     const clipboardContent = await navigator.clipboard.readText();
     parseClipboardIfContainsEmail(clipboardContent);
+  }
+
+  function handleClearClick() {
+    $address = new Address();
+    $products = [];
+    $selectedProductIds = [];
   }
 
   function parseClipboardIfContainsEmail(clipboardContent: string) {
@@ -44,7 +54,8 @@
 
 <Header company="Farben-Profi" platformName="Bestellungen">
   <HeaderUtilities>
-    <HeaderGlobalAction icon={DocumentImport} on:click={handleImportClick} />
+    <HeaderGlobalAction icon={TaskAdd} on:click={handleImportClick} />
+    <HeaderGlobalAction icon={TaskRemove} on:click={handleClearClick} />
     <HeaderGlobalAction
       bind:icon={loginButtonIcon}
       on:click={handleLoginDataButton}
