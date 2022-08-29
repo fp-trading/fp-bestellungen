@@ -6,6 +6,7 @@ import CompanyParser from "./CompanyParser";
 import NameParser from "./NameParser";
 import PhoneParser from "./PhoneParser";
 import Address, { address } from "../Address";
+import CommissionParser from "./CommissionParser";
 
 export default class AddressParser {
     parse(email: string): [Error?] {
@@ -19,7 +20,7 @@ export default class AddressParser {
 
     private parseAddress(email: string) {
         let addressLines = this.getAddressLines(email)
-        let name: string, phone: string, street: string, number: string, zip: string, city: string, company: string, error: Error
+        let name: string, phone: string, street: string, number: string, zip: string, city: string, company: string, commission: string, error: Error
 
         [ name, error ] = new NameParser().parse(addressLines.name);
         [ phone, error = error ] = new PhoneParser().parse(addressLines.rest);
@@ -28,8 +29,9 @@ export default class AddressParser {
         [ zip, error = error ] = new ZipCodeParser().parse(addressLines.zip);
         [ city, error = error ] = new CityParser().parse(addressLines.city);
         [ company, error = error ] = new CompanyParser().parse(addressLines.name);
-        
-        address.set(new Address(name, phone, street, number, zip, city, company))
+        [ commission, error = error ] = new CommissionParser().parse(email)
+
+        address.set(new Address(name, phone, street, number, zip, city, company, commission))
 
         if (error !== null) {
             throw error

@@ -86,6 +86,16 @@ describe('test email parser parses address', () => {
         emailParser.parse(emailWithOneColoredProduct)
         expect(get(address).city).toBe('Bad Waldsee')
     })
+
+    it('parses commission', () => {
+        emailParser.parse(emailWithOneProduct)
+        expect(get(address).commission).toBe('#202224042')
+
+        address.set(new Address())
+
+        emailParser.parse(emailWithOneColoredProduct)
+        expect(get(address).commission).toBe('#202224052')
+    })
 })
 
 describe('test email parser parses products', () => {
