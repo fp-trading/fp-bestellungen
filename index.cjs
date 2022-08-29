@@ -12,7 +12,7 @@ function isDev() {
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 900,
-        height: 620,
+        height: 716,
         webPreferences: {
             nodeIntegration: true,
             //preload: path.join(__dirname, 'preload.js')

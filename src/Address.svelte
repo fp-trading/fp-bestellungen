@@ -8,6 +8,15 @@
     <Row>
       <Column>
         <TextInput
+          labelText="Kommission"
+          placeholder="Kommissionstext eingeben..."
+          bind:value={$address.commission}
+        />
+      </Column>
+    </Row>
+    <Row>
+      <Column>
+        <TextInput
           labelText="Name"
           placeholder="Kundenname eingeben..."
           bind:value={$address.name}
@@ -60,7 +69,7 @@
         <TextInput
           labelText="Zusätzliche Adressangaben"
           placeholder="Zusätzliche Adressangaben eingeben..."
-          bind:value={$address.note}
+          bind:value={$address.company}
         />
       </Column>
     </Row>

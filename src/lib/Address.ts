@@ -8,8 +8,9 @@ export default class Address {
     zip: string
     city: string
     company: string
+    commission: string
 
-    constructor(name: string = '', phone: string = '', street: string = '', number: string = '', zip: string = '', city: string = '', company: string = '') {
+    constructor(name: string = '', phone: string = '', street: string = '', number: string = '', zip: string = '', city: string = '', company: string = '', commission = '') {
         this.name = name
         this.phone = phone
         this.street = street
@@ -17,6 +18,7 @@ export default class Address {
         this.zip = zip
         this.city = city
         this.company = company
+        this.commission = commission
     }
 }
 
