@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "src/index.ts",
+  "main": "index.cjs",
   "build": {
     "productName": "FP Bestellungen",
     "appId": "de.farben-profi.fp-bestellungen",
