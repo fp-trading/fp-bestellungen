@@ -35,8 +35,12 @@ export default class Notifier {
             return u
         })
 
+        this.notifySubscribersAfterTimeout(notification.timeout)
+    }
+
+    private notifySubscribersAfterTimeout(timeout: number) {
         setTimeout(() => {
             notifications.update(u => u)
-        }, notification.timeout)
+        }, timeout)
     }
 }

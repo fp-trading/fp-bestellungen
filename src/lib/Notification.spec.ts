@@ -1,5 +1,7 @@
-import { describe, expect, it } from "vitest";
-import { Notification } from './Notification'
+import { View } from "carbon-icons-svelte";
+import { get } from "svelte/store";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import Notifier, { Notification, notifications } from './Notification'
 
 describe('notification class', () => {
     it('creates notification with default values', () => {
@@ -27,5 +29,44 @@ describe('notification class', () => {
         expect(notification.title).toBe('Info')
         expect(notification.subtitle).toBe('Interessante Info')
         expect(notification.iconDescription).toBe('Info')
+    })
+})
+
+
+describe('notifier class', () => {
+
+    beforeEach(() => {
+        notifications.set([])
+        vi.useFakeTimers()
+    })
+
+    it('creates new Notifier', () => {
+        const notifier = new Notifier()
+
+        expect(notifier).toBeTruthy()
+    })
+
+    it('adds notification to store', () => {
+        expect(get(notifications).length).toBe(0)
+        new Notifier().add(new Notification())
+        expect(get(notifications).length).toBe(1)
+    })
+
+    it('removes notifies after timeout', () => {
+        const notifier = new Notifier()
+        const notification = new Notification()
+        let counter = 0
+
+        notifier.add(notification)
+
+        notifications.subscribe(() => {
+            counter++
+        })
+
+        expect(counter).toBe(1)
+
+        vi.runOnlyPendingTimers()
+
+        expect(counter).toBeGreaterThan(1)
     })
 })
