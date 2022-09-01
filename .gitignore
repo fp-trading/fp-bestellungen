@@ -27,3 +27,6 @@ dist-ssr
 
 # bin
 public/bin/*
+
+# coverage
+coverage/*

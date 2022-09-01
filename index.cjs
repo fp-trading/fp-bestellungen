@@ -2,7 +2,8 @@ const bodyParser = require('body-parser');
 const { app, BrowserWindow } = require('electron')
 //const path = require('path')
 const serve = require('electron-serve')
-const express = require('express')
+const express = require('express');
+const { OrderFulfiller } = require('./src/server/OrderFulfiller.cjs');
 const loadURL = serve({ directory: 'dist'})
 
 let mainWindow;
@@ -56,11 +57,13 @@ app.on('activate', () => {
 })
 
 const expressApp = express()
+const orderFulfiller = new OrderFulfiller()
 
 expressApp.use(bodyParser.json())
 
 expressApp.post('/api/fulfill', async (req, res) => {
-    console.log(req.body)
+    const [username, password] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString('utf-8').split(':')
+    orderFulfiller.fulfill(req.body.address, req.body.products, { username: username, password: password })
     res.status(200).send('fulfilling')
 })
 
