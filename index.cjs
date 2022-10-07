@@ -63,8 +63,8 @@ expressApp.use(bodyParser.json())
 
 expressApp.post('/api/fulfill', async (req, res) => {
     const [username, password] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString('utf-8').split(':')
-    orderFulfiller.fulfill(req.body.address, req.body.products, { username: username, password: password })
-    res.status(200).send('fulfilling')
+    const result = await orderFulfiller.fulfill(req.body.address, req.body.products, { username: username, password: password })
+    res.status(200).send(result.message)
 })
 
 expressApp.all('*', async (req, res) => {
