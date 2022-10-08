@@ -12,14 +12,14 @@ const service = new chrome.ServiceBuilder(chromedriverPath)
 
 module.exports = {
     OrderFulfiller: class {
-        driver
+        driver = this.instanciateDriver();
 
         constructor() {
-            this.instanciateDriver()
+            this.driver.manage().window().maximize();
         }
 
         instanciateDriver() {
-            this.driver = new webdriver.Builder()
+            return new webdriver.Builder()
                 .setChromeService(service)
                 .setChromeOptions(options)
                 .forBrowser('chrome')
@@ -55,10 +55,80 @@ module.exports = {
             for (const product of products) {
                 await this.fulfillProduct(product);
             }
+            await this.driver.wait(until.elementLocated(By.xpath('//*[@data-qa="component/productDetails/cartConfirmation"]')));
         }
 
         async enterAddress(address) {
-            console.log(address)
+            await this.driver.get('https://sto.de/s/cart');
+            await this.setDeliveryMethod();
+            await this.fillAddress(address);
+            await this.fillCommission(address);
+            await this.fillDeliveryDate();
+        }
+
+        async fillDeliveryDate() {
+            await this.driver.wait(until.elementLocated(By.xpath('//button[@data-qa="input/cart/configurationPanel/deliveryDateButton"]'))).click();
+
+            const { yyyy, mm, dd } = this.getDateStrings();
+
+            const dateInput = await this.driver.wait(until.elementLocated(By.xpath('//input[@data-qa="component/deliveryDateSelection/deliveryDate"]')));
+
+            await dateInput.sendKeys(dd);
+            await dateInput.sendKeys(mm);
+            await dateInput.sendKeys(yyyy);
+        }
+
+        getDateStrings() {
+            const nextWorkday = this.getNextWorkday();
+
+            return {
+                dd: String(nextWorkday.getDate()).padStart(2, '0'),
+                mm: String(nextWorkday.getMonth() + 1).padStart(2, '0'),
+                yyyy: nextWorkday.getFullYear()
+            }
+        }
+
+        getNextWorkday() {
+            const today = new Date();
+
+
+            if (today.getDay() === 5 ) {
+                return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
+            } else if (today.getDay() === 6) {
+                return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+            } else {
+                return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+            }
+        }
+
+        async fillCommission(address) {
+            await this.driver.wait(until.elementLocated(By.xpath('//button[@data-qa="input/cart/configurationPanel/commissioningTextButton"]'))).click();
+            await this.driver.wait(until.elementLocated(By.xpath('//*[@data-qa="component/commissioningTextAndGeneralInfo/commissioningText"]//input'))).sendKeys(address.commission);
+            await this.driver.wait(until.elementLocated(By.xpath('//textarea[@data-qa="component/commissioningTextAndGeneralInfo/generalInfo"]'))).sendKeys("Bitte eine Stunde vorher Avis: " + address.phone);
+        }
+
+        async setDeliveryMethod() {
+            await this.driver.wait(until.elementLocated(By.xpath('//button[@data-qa="input/cart/configurationPanel/deliveryMethodButton"]'))).click();
+            await this.driver.wait(until.elementLocated(By.xpath('//*[@data-qa="component/deliveryMethodSelection/deliveryMethodSelect"]'))).click();
+            await this.driver.wait(until.elementLocated(By.xpath('//*[@data-qa="component/deliveryMethodSelection/deliveryMethodSelect"]//li[@data-value="delivery"]'))).click();
+        }
+
+        async fillAddress(address) {
+            await this.driver.wait(until.elementLocated(By.xpath('//a[@data-qa="action/deliveryMethodSelection/showSingleUseDeliveryAddressDialog"]'))).click();
+            await this.driver.wait(until.elementLocated(By.xpath('//*[@data-qa="component/deliveryMethodSelection/singleUseStreetName"]//input'))).sendKeys(address.street);
+            await this.driver.wait(until.elementLocated(By.xpath('//*[@data-qa="component/deliveryMethodSelection/singleUseHouseNumber"]//input'))).sendKeys(address.number);
+            await this.driver.wait(until.elementLocated(By.xpath('//*[@data-qa="component/deliveryMethodSelection/singleUsePostcode"]//input'))).sendKeys(address.zip);
+            await this.driver.wait(until.elementLocated(By.xpath('//*[@data-qa="component/deliveryMethodSelection/singleUseCity"]//input'))).sendKeys(address.city);
+            if (address.company !== '')
+                await this.driver.wait(until.elementLocated(By.xpath('//*[@data-qa="component/deliveryMethodSelection/singleUseAddAddrInfo"]//input'))).sendKeys(address.company);
+            await this.driver.wait(until.elementLocated(By.xpath('//*[@data-qa="component/deliveryMethodSelection/singleUseNameContactPerson"]//input'))).sendKeys(this.getNameString(address.name, address.phone));
+            await this.driver.wait(until.elementLocated(By.xpath('//*[@data-qa="component/deliveryMethodSelection/singleUsePhone"]//input'))).sendKeys(address.phone);
+
+            await this.driver.wait(until.elementLocated(By.xpath('//button[@data-qa="action/deliveryMethodSelection/saveSingleUseAddress"]'))).click();
+        }
+
+        getNameString(name, phone) {
+            return name.substring(0, 34 - phone.length) + '*' + phone
         }
 
         async login(credentials) {
