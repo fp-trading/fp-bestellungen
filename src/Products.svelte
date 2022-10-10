@@ -2,19 +2,31 @@
   import {
     Button,
     DataTable,
+    Row,
     TextInput,
     Toolbar,
     ToolbarBatchActions,
   } from "carbon-components-svelte";
-  import { Run, Add, TrashCan } from "carbon-icons-svelte";
+  import { Run, Add, TrashCan, Search } from "carbon-icons-svelte";
   import ProductStore, {
     products,
     selectedProductIds,
   } from "./lib/ProductStore";
   import { address } from "./lib/Address";
   import { loginData } from "./lib/LoginDataStore";
+  import ProductSearchModal from "./ProductSearchModal.svelte";
 
   const productStore = new ProductStore();
+
+  let searchModalIsOpen = false;
+  let modalRowIndex;
+
+  function openSearchModal(rowIndex) {
+    return (e) => {
+      modalRowIndex = rowIndex;
+      searchModalIsOpen = true;
+    };
+  }
 
   function removeSelectedProducts() {
     $selectedProductIds.forEach((id) => {
@@ -84,13 +96,27 @@
       <TextInput
         size="sm"
         bind:value={$products[rowIndex].color}
-        style="max-width: 6rem;"
+        style="max-width: 8rem;"
       />
     {:else}
-      <TextInput size="sm" bind:value={$products[rowIndex].sku} />
+      <Row>
+        <TextInput size="sm" bind:value={$products[rowIndex].sku} />
+        <Button
+          iconDescription="Produkt suchen"
+          icon={Search}
+          size="small"
+          kind="secondary"
+          on:click={openSearchModal(rowIndex)}
+        />
+      </Row>
     {/if}
   </svelte:fragment>
   <svelte:fragment slot="expanded-row" let:row>
     Produkttitel: {row.title}
   </svelte:fragment>
 </DataTable>
+
+<ProductSearchModal
+  bind:open={searchModalIsOpen}
+  bind:rowIndex={modalRowIndex}
+/>
