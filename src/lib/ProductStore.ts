@@ -99,7 +99,7 @@ function getProductList() {
         }
 
         if (Array.isArray(product.material)) {
-            productList.concat(product.material)
+            productList = productList.concat(product.material)
         } else {
             productList.push(product.material)
         }
