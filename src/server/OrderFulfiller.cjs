@@ -5,8 +5,14 @@ const { until, By } = require('selenium-webdriver')
 const { Key } = require('selenium-webdriver')
 const path = require('path')
 
-const chromedriverPath = path.join(process.resourcesPath, '/public/bin/chromedriver');
-const chromePath = path.join(process.resourcesPath, '/public/bin/Google Chrome.app/Contents/MacOS/Google Chrome');
+function isDev() {
+    return process.mainModule.filename.indexOf('app.asar') === -1;
+}
+
+console.log(isDev())
+
+const chromedriverPath = path.join(isDev() ? appRootDir.get() : process.resourcesPath, '/public/bin/chromedriver');
+const chromePath = path.join(isDev() ? appRootDir.get() : process.resourcesPath, '/public/bin/Google Chrome.app/Contents/MacOS/Google Chrome');
 const options = new chrome.Options().setChromeBinaryPath(chromePath)
 const service = new chrome.ServiceBuilder(chromedriverPath)
 

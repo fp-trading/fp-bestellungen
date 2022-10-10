@@ -6,8 +6,8 @@ export default class LoginDataStore {
     showModal: boolean
 
     constructor(username: string = '', password: string = '', showModal: boolean = false) {
-        this.username = username
-        this.password = password
+        this.username = localStorage.getItem("username") || username;
+        this.password = localStorage.getItem("password") || password;
         this.showModal = showModal
     }
 
@@ -21,3 +21,8 @@ export default class LoginDataStore {
 }
 
 export const loginData: Writable<LoginDataStore> = writable(new LoginDataStore())
+
+loginData.subscribe(val => {
+    localStorage.setItem("username", val.username);
+    localStorage.setItem("password", val.password);
+})
