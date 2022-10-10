@@ -11,6 +11,8 @@
     products,
     selectedProductIds,
   } from "./lib/ProductStore";
+  import { address } from "./lib/Address";
+  import { loginData } from "./lib/LoginDataStore";
 
   const productStore = new ProductStore();
 
@@ -23,6 +25,31 @@
 
   function addEmptyProduct() {
     productStore.add();
+  }
+
+  async function fulfillOrder() {
+    const productsToFulfill = $products.filter((product) =>
+      $selectedProductIds.includes(product.id)
+    );
+
+    const body = {
+      address: $address,
+      products: productsToFulfill,
+    };
+
+    console.log(body);
+
+    const response = await fetch("http://localhost:5172/api/fulfill", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          "Basic " + btoa($loginData.username + ":" + $loginData.password),
+      },
+      body: JSON.stringify(body),
+    });
+
+    console.log(response);
   }
 </script>
 
@@ -40,7 +67,7 @@
   <Toolbar>
     <Button icon={Add} on:click={addEmptyProduct}>Hinzufügen</Button>
     <ToolbarBatchActions>
-      <Button icon={Run}>Ausführen</Button>
+      <Button icon={Run} on:click={fulfillOrder}>Ausführen</Button>
       <Button icon={TrashCan} kind="danger" on:click={removeSelectedProducts}
         >Entfernen</Button
       >

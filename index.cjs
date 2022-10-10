@@ -3,6 +3,7 @@ const { app, BrowserWindow } = require('electron')
 //const path = require('path')
 const serve = require('electron-serve')
 const express = require('express');
+const cors = require('cors');
 const { OrderFulfiller } = require('./src/server/OrderFulfiller.cjs');
 const loadURL = serve({ directory: 'dist'})
 
@@ -61,8 +62,16 @@ const orderFulfiller = new OrderFulfiller()
 
 expressApp.use(bodyParser.json())
 
+expressApp.use(cors({
+    origin: ['http://localhost:5173', 'app://-']
+}))
+
 expressApp.post('/api/fulfill', async (req, res) => {
+    console.log(JSON.stringify(req.headers))
     const [username, password] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString('utf-8').split(':')
+    console.log('username: ', username)
+    console.log('password: ', password)
+    console.log(JSON.stringify(req.body))
     const result = await orderFulfiller.fulfill(req.body.address, req.body.products, { username: username, password: password })
     res.status(200).send(result.message)
 })

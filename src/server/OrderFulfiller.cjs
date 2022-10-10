@@ -3,10 +3,10 @@ const chrome = require('selenium-webdriver/chrome')
 const appRootDir = require('app-root-dir')
 const { until, By } = require('selenium-webdriver')
 const { Key } = require('selenium-webdriver')
-const { default: e } = require('express')
+const path = require('path')
 
-const chromedriverPath = appRootDir.get() + '/public/bin/chromedriver'
-const chromePath = appRootDir.get() + '/public/bin/Google Chrome.app/Contents/MacOS/Google Chrome'
+const chromedriverPath = path.join(process.resourcesPath, '/public/bin/chromedriver');
+const chromePath = path.join(process.resourcesPath, '/public/bin/Google Chrome.app/Contents/MacOS/Google Chrome');
 const options = new chrome.Options().setChromeBinaryPath(chromePath)
 const service = new chrome.ServiceBuilder(chromedriverPath)
 
@@ -19,11 +19,11 @@ module.exports = {
         }
 
         instanciateDriver() {
-            return new webdriver.Builder()
-                .setChromeService(service)
-                .setChromeOptions(options)
-                .forBrowser('chrome')
-                .build()
+                return new webdriver.Builder()
+                    .setChromeService(service)
+                    .setChromeOptions(options)
+                    .forBrowser('chrome')
+                    .build()
         }
 
         async fulfill(address, products, credentials) {
@@ -34,7 +34,8 @@ module.exports = {
                 return { message: "success", status: 200 }
             } catch (err) {
                 if (err.name === 'NoSuchWindowError') {
-                    this.instanciateDriver()
+                    this.driver = this.instanciateDriver();
+                    this.driver.manage().window().maximize();
                     await this.fulfill(address, products, credentials)
                 } else {
                     err.status = 400
