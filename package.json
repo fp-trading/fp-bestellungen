@@ -1,16 +1,24 @@
 {
   "name": "fp-bestellungen",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "main": "index.cjs",
+  "author": {
+    "email": "jonas.abrahams@farben-profi.de",
+    "name": "Jonas Abrahams",
+    "url": "https://github.com/fp-trading"
+  },
+  "description": "Software for automating the order process of Sto orders.",
   "build": {
     "productName": "FP Bestellungen",
     "appId": "de.farben-profi.fp-bestellungen",
     "directories": {
       "output": "build"
     },
-    "extraResources": ["./public/bin/**"]
+    "extraResources": [
+      "./public/bin/**"
+    ]
   },
   "scripts": {
     "dev": "vite",
@@ -33,6 +41,7 @@
     "concurrently": "^7.3.0",
     "electron": "^20.0.2",
     "electron-builder": "^23.3.3",
+    "electron-builder-notarize": "^1.5.0",
     "jsdom": "^20.0.0",
     "svelte": "^3.49.0",
     "svelte-check": "^2.8.0",
@@ -50,6 +59,7 @@
     "electron-serve": "^1.1.0",
     "express": "^4.18.1",
     "selenium-webdriver": "^4.4.0",
+    "update-electron-app": "^2.0.1",
     "uuid": "^8.3.2"
   }
 }

@@ -1,11 +1,12 @@
 const bodyParser = require('body-parser');
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow } = require('electron');
+require('update-electron-app');
 //const path = require('path')
-const serve = require('electron-serve')
+const serve = require('electron-serve');
 const express = require('express');
 const cors = require('cors');
 const { OrderFulfiller } = require('./src/server/OrderFulfiller.cjs');
-const loadURL = serve({ directory: 'dist'})
+const loadURL = serve({ directory: 'dist'});
 
 let mainWindow;
 
