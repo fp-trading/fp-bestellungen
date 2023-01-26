@@ -16,7 +16,6 @@
 
   let comboItems;
   $: comboItems = $stoProducts.map((product, index) => {
-    console.log(product);
     return {
       id: index,
       text: product.sku,

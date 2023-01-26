@@ -68,13 +68,9 @@ expressApp.use(cors({
 }))
 
 expressApp.post('/api/fulfill', async (req, res) => {
-    console.log(JSON.stringify(req.headers))
     const [username, password] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString('utf-8').split(':')
-    console.log('username: ', username)
-    console.log('password: ', password)
-    console.log(JSON.stringify(req.body))
     const result = await orderFulfiller.fulfill(req.body.address, req.body.products, { username: username, password: password })
-    res.status(200).send(result.message)
+    res.status(result.status).json({message: result.message})
 })
 
 expressApp.all('*', async (req, res) => {

@@ -15,6 +15,7 @@
   import { address } from "./lib/Address";
   import { loginData } from "./lib/LoginDataStore";
   import ProductSearchModal from "./ProductSearchModal.svelte";
+  import Notifier, { Notification } from "./lib/Notification";
 
   const productStore = new ProductStore();
 
@@ -61,7 +62,20 @@
       body: JSON.stringify(body),
     });
 
-    console.log(response);
+    handleResponse(response);
+  }
+
+  async function handleResponse(response: Response) {
+    if (response.status === 200) {
+      new Notifier().add(
+        new Notification(
+          "success",
+          false,
+          "Abgeschlossen!",
+          (await response.json()).message
+        )
+      );
+    }
   }
 </script>
 

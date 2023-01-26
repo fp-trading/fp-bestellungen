@@ -37,7 +37,8 @@ module.exports = {
                 await this.ensureLogin(credentials);
                 await this.fulfillProducts(products);
                 await this.enterAddress(address);
-                return { message: "success", status: 200 }
+                console.log('address complete')
+                return { message: `Bestellung ${address.commission} ausgeführt!`, status: 200 }
             } catch (err) {
                 if (err.name === 'NoSuchWindowError') {
                     this.driver = this.instanciateDriver();
@@ -146,8 +147,12 @@ module.exports = {
         }
 
         async denyCookies() {
-            const acceptButton = await this.driver.wait(until.elementLocated(By.xpath('//button[@data-qa="cookie/accept"]')));
-            await acceptButton.click();
+            const shadowRoot = await this.driver.wait(until.elementLocated(By.css('#usercentrics-root')));
+            const extShadowRoot = await this.driver.executeScript('return arguments[0].shadowRoot', shadowRoot);
+            const acceptButton = await extShadowRoot.findElement(By.css('button[data-testid="uc-deny-all-button"]'));
+            setTimeout(async () => {
+                await acceptButton.click();
+            }, 500);
         }
 
         async enterLoginData(credentials) {
